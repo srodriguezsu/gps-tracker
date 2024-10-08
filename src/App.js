@@ -1,18 +1,25 @@
-import React, { useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import io from 'socket.io-client';
 
 // Connect to your WebSocket server
 const socket = io('https://telemetria-server.onrender.com');
 
 function GPSAccelerometer() {
+  const [gpsCurrentData, setGpsCurrentData] = useState({
+    lat:0,
+    lng:0,
+    speed:0,
+  })
   useEffect(() => {
     // Function to send GPS data
     const sendGPSData = (position) => {
-      const { latitude, longitude } = position.coords;
+      const { latitude, longitude, speed } = position.coords;
       const gpsData = {
         lat: latitude,
         lng: longitude,
+        speed: speed ? (speed * 3.6).toFixed(2) : 0, // Convert speed from m/s to km/h (if available)
       };
+      setGpsCurrentData(gpsData); // For viewing the live data
       console.log('Sending GPS data:', gpsData);
       socket.emit('gpsData', gpsData); // Send GPS data to WebSocket server
     };
@@ -38,32 +45,14 @@ function GPSAccelerometer() {
       console.error('Geolocation is not supported by this browser.');
     }
 
-    // Function to send accelerometer data
-    const handleMotion = (event) => {
-      const { acceleration } = event;
-      if (acceleration) {
-        const accelerometerData = {
-          x: acceleration.x,
-          y: acceleration.y,
-          z: acceleration.z,
-        };
-        console.log('Sending accelerometer data:', accelerometerData);
-        socket.emit('accelerometerData', accelerometerData); // Send accelerometer data to WebSocket server
-      }
-    };
-
-    // Adding event listener for device motion
-    window.addEventListener('devicemotion', handleMotion);
-
-    // Cleanup function to remove event listeners
-    return () => {
-      window.removeEventListener('devicemotion', handleMotion);
-    };
   }, []);
 
   return (
       <div>
-        <h1>GPS and Accelerometer Data Sender</h1>
+        <h1>Transmisor GPS</h1>
+        <p>Latitud: {gpsCurrentData.lat}</p>
+        <p>Longitud: {gpsCurrentData.lng}</p>
+        <p>Velocidad: {gpsCurrentData.speed}</p>
       </div>
   );
 }
