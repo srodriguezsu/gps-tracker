@@ -13,10 +13,10 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/",
+  "start_url": "/gps-tracker",
   "background_color": "#ffffff",
   "display": "standalone",
-  "scope": "/",
+  "scope": "/gps-tracker",
   "theme_color": "#f4f0f9",
   "description": "A GPS Transmitter PWA",
   "orientation": "portrait-primary",
