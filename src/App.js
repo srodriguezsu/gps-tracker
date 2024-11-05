@@ -10,6 +10,7 @@ function GPSAccelerometer() {
     lng:0,
     speed:0,
   })
+
   useEffect(() => {
     // Function to send GPS data
     const sendGPSData = (position) => {
