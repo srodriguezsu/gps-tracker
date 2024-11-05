@@ -14,11 +14,11 @@
     }
   ],
   "start_url": "/",
-  "background_color": "#ffffff",
+  "background_color": "#301c4a",
   "display": "standalone",
   "scope": "/",
   "theme_color": "#f4f0f9",
   "description": "A GPS Transmitter PWA",
-  "orientation": "portrait-primary",
+  "orientation": "landscape-primary",
   "permissions": ["geolocation"]
 }
