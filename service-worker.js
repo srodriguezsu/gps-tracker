@@ -1,5 +1,3 @@
-import io from "socket.io-client";
-
 const CACHE_NAME = 'gps-pwa-cache';
 const urlsToCache = [
     '/',
@@ -7,10 +5,9 @@ const urlsToCache = [
     '/logo192.png',
     '/logo512.png'
 ];
-const socket = io('https://telemetria-server.onrender.com');
 
+// Installation event - cache essential files
 self.addEventListener('install', (event) => {
-    // Perform install steps
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
@@ -20,84 +17,36 @@ self.addEventListener('install', (event) => {
     );
 });
 
+// Fetch event - serve cached files when offline
 self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(event.request)
             .then((response) => {
-                // Cache hit - return response
                 if (response) {
-                    return response;
+                    return response; // Return cached response
                 }
-                return fetch(event.request);
+                return fetch(event.request); // Fetch from network if not cached
             })
     );
 });
 
-// Background Sync registration
+// Background Sync event
 self.addEventListener('sync', (event) => {
     if (event.tag === 'gps-sync') {
-        event.waitUntil(sendGPSDataToServer());
+        event.waitUntil(syncGPSData());
     }
 });
+
+// Periodic Sync event
 self.addEventListener('periodicsync', (event) => {
     if (event.tag === 'gps-sync') {
         event.waitUntil(syncGPSData());
     }
 });
-const sendGPSData = (position) => {
-    const { latitude, longitude, speed } = position.coords;
-    const gpsData = {
-        lat: latitude,
-        lng: longitude,
-        speed: speed ? (speed * 3.6).toFixed(2) : 0, // Convert speed from m/s to km/h (if available)
-    };
 
-    console.log('Sending GPS data:', gpsData);
-    socket.emit('gpsData', gpsData); // Send GPS data to WebSocket server
-};
-
-// Function to handle GPS position success
-const handleGPSSuccess = (position) => {
-    sendGPSData(position);
-};
-
-// Function to handle GPS position error
-const handleGPSError = (error) => {
-    console.error('Error getting GPS position:', error);
-};
-
-async function sendGPSDataToServer() {
-
-    // Requesting GPS permission and getting current position
-    if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(handleGPSSuccess, handleGPSError, {
-            enableHighAccuracy: true,
-            maximumAge: 0,
-            timeout: 5000,
-        });
-    } else {
-        console.error('Geolocation is not supported by this browser.');
-    }
-    console.log('Syncing GPS data...');
-}
-
-
+// Mock sync function for GPS data
 async function syncGPSData() {
-    // Requesting GPS permission and getting current position
-    if (navigator.geolocation) {
-        navigator.geolocation.watchPosition(handleGPSSuccess, handleGPSError, {
-            enableHighAccuracy: true,
-            maximumAge: 0,
-            timeout: 5000,
-        });
-    } else {
-        console.error('Geolocation is not supported by this browser.');
-    }
+    // Simulate syncing GPS data (e.g., send cached data to the server)
     console.log('Syncing GPS data...');
-
-
+    // Add the logic to fetch stored data and send to the server
 }
-
-
-// Background Fetch or Push Notification setup
-// You can also use Web Push APIs to push updates when the app is in the background
