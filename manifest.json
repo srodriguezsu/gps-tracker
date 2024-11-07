@@ -15,7 +15,7 @@
   ],
   "start_url": "/gps-tracker",
   "background_color": "#301c4a",
-  "display": "standalone",
+  "display": "fullscreen",
   "scope": "/",
   "theme_color": "#f4f0f9",
   "description": "A GPS Transmitter PWA",
